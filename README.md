@@ -2,13 +2,13 @@
 
 ### Un proyecto que implementa un cliente API Gateway y dos microservicios de productos y de ordenes enlazados por un NATS Server y desplegado en Docker Compose.
 
-## Levantar el proyecto en desarrollo
+## Importante
 
-1. Clonar el repositorio
-2. Crear un archivo `.env` en el root del proyecto basado en el archivo `.env.template`
-3. Ejecutar `docker compose up --build`
+Si se trabaja en el repositorio que tiene los sub-módulos, **primero actualizar y hacer push** en el sub-módulo y **después** en el repositorio principal.
 
-### Pasos para crear los Git Submodules
+Si se hace al revés, se perderán las referencias de los sub-módulos en el repositorio principal y tendremos que resolver conflictos.
+
+## Pasos para crear los Git Submodules
 
 1. Crear un nuevo repositorio en GitHub
 2. Clonar el repositorio en la máquina local
@@ -39,11 +39,12 @@ git submodule update --init --recursive
 git submodule update --remote
 ```
 
-## Importante
+## Levantar el proyecto en desarrollo
 
-Si se trabaja en el repositorio que tiene los sub-módulos, **primero actualizar y hacer push** en el sub-módulo y **después** en el repositorio principal.
-
-Si se hace al revés, se perderán las referencias de los sub-módulos en el repositorio principal y tendremos que resolver conflictos.
+1. Clonar el repositorio
+2. Revisar los pasos para crear los Git Submodules en el apartado anterior, aplicar lo que sea necesario.
+3. Copiar las variables de entorno que se tengan creadas o crear un archivo `.env` en el root del proyecto basado en el archivo `.env.template`
+4. Ejecutar `docker compose up --build`
 
 ## Para resolver los errores de importacion de dependencias en los proyectos
 
@@ -58,4 +59,7 @@ cd ../orders-ms
 npm install
 cd ../payments-ms
 npm install
+cd ..
 ```
+
+Volver a levantar el proyecto `docker compose up --build`
