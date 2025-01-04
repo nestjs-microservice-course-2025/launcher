@@ -56,4 +56,6 @@ cd ../products-ms
 npm install
 cd ../orders-ms
 npm install
+cd ../payments-ms
+npm install
 ```
