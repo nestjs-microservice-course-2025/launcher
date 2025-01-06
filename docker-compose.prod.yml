@@ -3,6 +3,7 @@ version: '3'
 services:
   nats-server:
     image: nats:latest
+    # descomentar los puertos o remapearlos para monitorear la red nats en localhost:8222
   #   ports:
   #     - 8222:8222
 
@@ -28,20 +29,17 @@ services:
       - NATS_SERVERS=nats://nats-server:4222
       - DATABASE_URL=file:./dev.db
 
-  # orders-ms:
-  #   depends_on:
-  #     - orders-db
-  #   build: ./orders-ms
-  #   ports:
-  #     - 3002:3002
-  #   volumes:
-  #     - ./orders-ms/src:/usr/src/app/src
-  #     # - ./orders-ms/prisma:/usr/src/app/prisma
-  #   command: npm run start:dev
-  #   environment:
-  #     - PORT=3002
-  #     - NATS_SERVERS=nats://nats-server:4222
-  #     - DATABASE_URL=postgresql://postgres:654321@orders_database:5432/orders_db?schema=public
+  orders-ms:
+    build: 
+      context: ./orders-ms
+      dockerfile: dockerfile.prod
+      args:
+        - ORDERS_MS_DATABASE_URL=${ORDERS_MS_DATABASE_URL}
+    image: orders-ms-prod
+    environment:
+      - PORT=${ORDERS_MS_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=${ORDERS_MS_DATABASE_URL}
   
   payments-ms:
     build: 
