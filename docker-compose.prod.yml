@@ -18,18 +18,15 @@ services:
       - PORT=${CLIENT_GATEWAY_PORT}
       - NATS_SERVERS=nats://nats-server:4222
 
-  # products-ms:
-  #   build: ./products-ms
-  #   ports:
-  #     - 3001:3001
-  #   volumes:
-  #     - ./products-ms/src:/usr/src/app/src
-  #     # - ./products-ms/prisma:/usr/src/app/prisma
-  #   command: npm run start:dev
-  #   environment:
-  #     - PORT=3001
-  #     - NATS_SERVERS=nats://nats-server:4222
-  #     - DATABASE_URL=file:./dev.db
+  products-ms:
+    build: 
+      context: ./products-ms
+      dockerfile: dockerfile.prod
+    image: products-ms-prod
+    environment:
+      - PORT=${PRODUCTS_MS_PORT}
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=file:./dev.db
 
   # orders-ms:
   #   depends_on:
@@ -46,41 +43,28 @@ services:
   #     - NATS_SERVERS=nats://nats-server:4222
   #     - DATABASE_URL=postgresql://postgres:654321@orders_database:5432/orders_db?schema=public
   
-  # orders-db:
-  #   container_name: orders_database
-  #   image: postgres:16.2
-  #   restart: always
-  #   volumes:
-  #     - ./orders-ms/postgres:/var/lib/postgresql/data
-  #   ports: 
-  #     - 5432:5432
-  #   environment:
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=654321
-  #     - POSTGRES_DB=orders_db
+  payments-ms:
+    build: 
+      context: ./payments-ms
+      dockerfile: dockerfile.prod
+    image: payments-ms-prod
+    ports:
+      - ${PAYMENTS_MS_PORT}:${PAYMENTS_MS_PORT}
+    environment:
+      - PORT=${PAYMENTS_MS_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - STRIPE_SECRET=${STRIPE_SECRET}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
+      - STRIPE_CANCEL_URL=${STRIPE_CANCEL_URL}
 
-  # payments-ms:
-  #   build: ./payments-ms
-  #   ports:
-  #     - ${PAYMENTS_MS_PORT}:${PAYMENTS_MS_PORT}
-  #   volumes:
-  #     - ./payments-ms/src:/usr/src/app/src
-  #   command: npm run start:dev
-  #   environment:
-  #     - PORT=${PAYMENTS_MS_PORT}
-  #     - NATS_SERVERS=${NATS_SERVERS}
-  #     - STRIPE_SECRET=${STRIPE_SECRET}
-  #     - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-  #     - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
-  #     - STRIPE_CANCEL_URL=${STRIPE_CANCEL_URL}
-
-  # auth-ms:
-  #   build: ./auth-ms
-  #   volumes:
-  #     - ./auth-ms/src:/usr/src/app/src
-  #   command: npm run start:dev
-  #   environment:
-  #     - PORT=${AUTH_MS_PORT}
-  #     - NATS_SERVERS=${NATS_SERVERS}
-  #     - DATABASE_URL=${AUTH_MS_DATABASE_URL}
-  #     - JWT_SECRET=${JWT_SECRET}
+  auth-ms:
+    build: 
+      context: ./auth-ms
+      dockerfile: dockerfile.prod
+    image: auth-ms-prod
+    environment:
+      - PORT=${AUTH_MS_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=${AUTH_MS_DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
