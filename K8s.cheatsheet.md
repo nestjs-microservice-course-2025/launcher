@@ -3,6 +3,7 @@
 - Crear configuración `helm create <nombre>`
 - Aplicar configuración inicial: `helm install <nombre> .`
 - Aplicar actualizaciones: `helm upgrade <nombre> .`
+- Cuando se quiere desplegar en GKE ejecutar el create y luego: `helm install <nombre> .` Ej. `helm install tienda-gke .`
 
 # K8s commands
 
@@ -23,12 +24,6 @@ Ejemplo para nats:
 ```
 kubectl create deployment nats --image=nats --dry-run=client -o yaml > deployment.yml
 ```
-
-# Hacer llamadas a servicios
-
-- Ejecutar el siguiente comando en la carpeta k8s/tienda: `kubectl get nodes -o wide`. Tomar la IP de la columna INTERNAL-IP
-- Listar los servicios: `kubectl get services`. Tomar el puerto de la columna PORT del servicio client-gateway o el que se quiera llamar (debe tener los puertos expuestos en la configuracion de kubernetes, recordar que el puerto se muestra como \*\*\*:{tomar_este}/TCP).
-- En postman, cambiar localhost por la INTERNAL-IP anterior y cambiar el puerto .
 
 # Crear service
 
@@ -115,4 +110,16 @@ kubectl get secret <nombre> -o yaml > <nombre>.yml
 
 ```
 kubectl create -f <nombre>.yml
+```
+
+## Revisar ambiente de desarrollo o producción
+
+- Para revisar en cual ambiente se encuentra actualmente: `kubectl config get-contexts`
+- Para cambiar al ambiente de desarrollo ejecutar `kubectl config use-context docker-desktop`
+- Para cambiar al ambiente de producción ejecutar `kubectl config use-context gke_products-app-microservices_southamerica-east1_tienda-kubernetes`
+
+## Destruir recursos
+
+```
+helm uninstall tienda-gke
 ```
